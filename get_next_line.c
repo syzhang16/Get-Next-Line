@@ -1,65 +1,65 @@
 #include "get_next_line.h"
 
-static	int	ft_read_buffer(char **buffer, int fd)
+static int		ft_read_file(char **str, int fd)
 {
-	char	*str;
-	char	buf[BUFF_SIZE + 1];
 	int		ret;
+	char	*s;
+	char	buf[BUFF_SIZE + 1];
 
-	if ((ret = read(fd,buf, BUFF_SIZE)) == -1)
+	if ((ret = read(fd, buf, BUFF_SIZE)) == -1)
 		return (-1);
 	buf[ret] = '\0';
-	str = *buffer;
-	*buffer = ft_strjoin(*buffer, buf);
-	if (*str != 0)
-		free(str);
+	s = *str;
+	*str = ft_strjoin(*str, buf);
+	if (*s != 0)
+		free(s);
 	return (ret);
 }
 
-static	int	ft_get_line(char **buffer, char **line, char *str)
+static int		ft_get_line(char **str, char **line, char *s)
 {
-	char	*attach;
 	int		i;
+	char	*join;
 
 	i = 0;
-	if (*str == '\n')
+	if (*s == '\n')
 		i = 1;
-	*str = 0;
-	*line = ft_strjoin("", *buffer);
-	if (i == 0 && ft_strlen(*buffer) != 0)
+	*s = 0;
+	*line = ft_strjoin("", *str);
+	if (i == 0 && ft_strlen(*str) != 0)
 	{
-		*buffer = ft_strnew(1);
+		*str = ft_strnew(1);
 		return (1);
 	}
-	else if (i == 0 && !(ft_strlen(*buffer)))
+	else if (i == 0 && !(ft_strlen(*str)))
 		return (0);
-	attach = *buffer;
-	*buffer = ft_strjoin(str + 1, "");
-	free(attach);
+	join = *str;
+	*str = ft_strjoin(s + 1, "");
+	free(join);
 	return (i);
 }
 
-int			get_next_line(const int fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
-	static	char	*buffer;
-	char			*str;
-	int				ret;
+	int			ret;
+	char		*s;
+	static char	*str;
 
-	if (buffer == 0)
-		buffer = "";
+	if (str == 0)
+		str = "";
 	if (!line || BUFF_SIZE < 1)
 		return (-1);
 	ret = BUFF_SIZE;
 	while (line)
 	{
-		str = buffer;
-		while (*str || ret < BUFF_SIZE)
+		s = str;
+		while (*s || ret < BUFF_SIZE)
 		{
-			if (*str == '\n' || *str == 0 || *str == -1)
-				return (ft_get_line(&str, line, str));
-			str++;
+			if (*s == '\n' || *s == 0 || *s == -1)
+				return (ft_get_line(&str, line, s));
+			s++;
 		}
-		ret = ft_read_buffer(&buffer, fd);
+		ret = ft_read_file(&str, fd);
 		if (ret == -1)
 			return (-1);
 	}
