@@ -18,25 +18,25 @@ static int		ft_read_file(char **str, int fd)
 
 static int		ft_get_line(char **str, char **line, char *s)
 {
-	int		i;
-	char	*join;
+	int		l;;
+	char	*joinstr;
 
-	i = 0;
+	l = 0;
 	if (*s == '\n')
-		i = 1;
+		l = 1;
 	*s = 0;
 	*line = ft_strjoin("", *str);
-	if (i == 0 && ft_strlen(*str) != 0)
+	if (l == 0 && ft_strlen(*str) != 0)
 	{
 		*str = ft_strnew(1);
 		return (1);
 	}
-	else if (i == 0 && !(ft_strlen(*str)))
+	else if (l == 0 && !(ft_strlen(*str)))
 		return (0);
-	join = *str;
+	joinstr = *str;
 	*str = ft_strjoin(s + 1, "");
-	free(join);
-	return (i);
+	free(joinstr);
+	return (l);
 }
 
 int				get_next_line(const int fd, char **line)
@@ -45,10 +45,10 @@ int				get_next_line(const int fd, char **line)
 	char		*s;
 	static char	*str;
 
-	if (str == 0)
-		str = "";
 	if (!line || BUFF_SIZE < 1)
 		return (-1);
+	if (str == 0)
+		str = "";
 	ret = BUFF_SIZE;
 	while (line)
 	{
