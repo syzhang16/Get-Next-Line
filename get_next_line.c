@@ -16,27 +16,27 @@ static int		ft_read_file(char **str, int fd)
 	return (ret);
 }
 
-static int		ft_get_line(char **str, char **line, char *s)
+static int		ft_gl(char **str, char **line, char *s)
 {
-	int		l;;
+	int		lines;;
 	char	*joinstr;
 
-	l = 0;
+	lines = 0;
 	if (*s == '\n')
-		l = 1;
+		lines = 1;
 	*s = 0;
 	*line = ft_strjoin("", *str);
-	if (l == 0 && ft_strlen(*str) != 0)
+	if (lines == 0 && ft_strlen(*str) != 0)
 	{
 		*str = ft_strnew(1);
 		return (1);
 	}
-	else if (l == 0 && !(ft_strlen(*str)))
+	else if (lines == 0 && !(ft_strlen(*str)))
 		return (0);
 	joinstr = *str;
 	*str = ft_strjoin(s + 1, "");
 	free(joinstr);
-	return (l);
+	return (lines);
 }
 
 int				get_next_line(const int fd, char **line)
@@ -56,7 +56,7 @@ int				get_next_line(const int fd, char **line)
 		while (*s || ret < BUFF_SIZE)
 		{
 			if (*s == '\n' || *s == 0 || *s == -1)
-				return (ft_get_line(&str, line, s));
+				return (ft_gl(&str, line, s));
 			s++;
 		}
 		ret = ft_read_file(&str, fd);
