@@ -45,7 +45,7 @@ int				get_next_line(const int fd, char **line)
 	char		*s;
 	static char	*str;
 
-	if (!line || BUFF_SIZE < 1)
+	if (fd < 0 || !line || BUFF_SIZE < 1)
 		return (-1);
 	if (str == 0)
 		str = "";
