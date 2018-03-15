@@ -47,7 +47,7 @@ static	int		ft_gl(char **str, char **line, char *s)
 	lines = 0;
 	if (*s == '\n')
 		lines = 1;
-	*s = 0;
+	*s = '\0';
 	*line = ft_join("", *str);
 	if (lines == 0 && ft_strlen(*str) != 0)
 	{
