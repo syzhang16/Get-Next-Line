@@ -1,6 +1,5 @@
 #include "get_next_line.h"
 
-//fonction qui va me permettre d'indiquer quel caractere je souhaite qu'il cherche
 static int		ft_search_char(char const *s, char c)
 {
 	int	i;
@@ -14,20 +13,20 @@ static int		ft_search_char(char const *s, char c)
 	return (-1);
 }
 
-static char	*ft_join(char **line, char const *buff)
+static char	*gnl_join(char **line, char const *buff)
 {
 	char	*tmp;
-	int		i;
+	int		n;
 
-	if ((i = ft_search_char(buff, '\n')) < -1) // on recupere l'index d'un \n dans le buffer
+	if ((n = ft_strindexchr(buff, '\n')) < -1)
 		return (NULL);
-	i = (i == -1) ? ft_strlen(buff) : i; // si -1 c'est qu'il n'y a pas de \n
-	if (!(tmp = ft_strnew(ft_strlen(*line) + (i)))) //on cree une nouvelle str avec la taille de *line et de i
+	n = (n == -1) ? ft_strlen(buff) : n;
+	if (!(tmp = ft_strnew(ft_strlen(*line) + (n))))
 		return (NULL);
-	ft_strcpy(tmp, *line); //on fait un strjoin
+	ft_strcpy(tmp, *line);
 	ft_strdel(&(*line));
-	ft_strncat(tmp, (char*)buff, i);
-	ft_strcpy((char*)buff, &(buff[(buff[i] == '\n') ? (i + 1) : i])); //on deplace l'index 0 du buffer apres le \n en faisant une copie
+	ft_strncat(tmp, (char*)buff, n);
+	ft_strcpy((char*)buff, &(buff[(buff[n] == '\n') ? (n + 1) : n]));
 	return (tmp);
 }
 
@@ -37,21 +36,21 @@ int				get_next_line(const int fd, char **line)
 	int				ret;
 	int				endl;
 
-	if (fd < 0 || !line || !(*line = ft_strnew(BUFF_SIZE)) || !BUFF_SIZE) //on check le necessaire
+	if (fd < 0 || !line || !(*line = ft_strnew(BUFF_SIZE)) || !BUFF_SIZE)
 		return (-1);
-	endl = -1; //si endl = -1 c'est qu'on a lu une ligne
+	endl = -1;
 	while (endl == -1)
 	{
-		if (!buff[0]) //si mon buffer est vide a l'index 0 on le remplis de 0
+		if (!buff[0])
 			ft_bzero(buff, BUFF_SIZE + 1);
-		if (!buff[0] && (ret = read(fd, buff, BUFF_SIZE)) < 0) //si mon buffer est vide a l'index 0 on lit la ligne
+		if (!buff[0] && (ret = read(fd, buff, BUFF_SIZE)) < 0)
 			return (-1);
-		if (!ret && **line) //ret = la valeur de retour de read si elle est egale a 0 et que **line est pas vide on dit que la ligne est lue
+		if (!ret && **line)
 			return (1);
-		if (!ret && !buff[0]) //si ret = 0 et que buff[0] == \0 alors on dit que le fichier est lu en entier
+		if (!ret && !buff[0])
 			return (0);
-		if ((endl = ft_search_char(buff, '\n')) < -1 || //on check si on a des erreurs en lancant les fonctions
-				!(*line = ft_join(line, buff)))
+		if ((endl = ft_strindexchr(buff, '\n')) < -1 ||
+				!(*line = gnl_join(line, buff)))
 			return (-1);
 	}
 	return (1);
