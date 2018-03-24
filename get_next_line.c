@@ -13,12 +13,12 @@ static int		ft_search_char(char const *s, char c)
 	return (-1);
 }
 
-static char	*gnl_join(char **line, char const *buff)
+static char		*gnl_join(char **line, char const *buff)
 {
 	char	*tmp;
 	int		n;
 
-	if ((n = ft_strindexchr(buff, '\n')) < -1)
+	if ((n = ft_search_char(buff, '\n')) < -1)
 		return (NULL);
 	n = (n == -1) ? ft_strlen(buff) : n;
 	if (!(tmp = ft_strnew(ft_strlen(*line) + (n))))
@@ -49,7 +49,7 @@ int				get_next_line(const int fd, char **line)
 			return (1);
 		if (!ret && !buff[0])
 			return (0);
-		if ((endl = ft_strindexchr(buff, '\n')) < -1 ||
+		if ((endl = ft_search_char(buff, '\n')) < -1 ||
 				!(*line = gnl_join(line, buff)))
 			return (-1);
 	}
