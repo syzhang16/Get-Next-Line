@@ -1,57 +1,52 @@
 #include "get_next_line.h"
 
-static int		ft_search_char(char const *s, char c)
+int		ft_len(char *str, char c)
 {
-	int	i;
+	int i;
 
-	i = -1;
-	if (!s)
-		return (-2);
-	while (s[++i])
-		if (s[i] == c)
-			return (i);
-	return (-1);
+	i = 0;
+	if (str == NULL)
+		return (0);
+	while (str[i] && str[i] != c)
+		i++;
+	return (i);
 }
 
-static char		*gnl_join(char **line, char const *buff)
+void	gnl_join(char **line, char **str)
 {
-	char	*tmp;
-	int		n;
+	char *tmp;
 
-	if ((n = ft_search_char(buff, '\n')) < -1)
-		return (NULL);
-	n = (n == -1) ? ft_strlen(buff) : n;
-	if (!(tmp = ft_strnew(ft_strlen(*line) + (n))))
-		return (NULL);
-	ft_strcpy(tmp, *line);
-	ft_strdel(&(*line));
-	ft_strncat(tmp, (char*)buff, n);
-	ft_strcpy((char*)buff, &(buff[(buff[n] == '\n') ? (n + 1) : n]));
-	return (tmp);
+	tmp = NULL;
+	*line = ft_strsub(*str, 0, ft_len(*str, '\n'));
+	tmp = ft_strsub(*str, ft_len(*str, '\n') + 1,
+			ft_strlen(&str[0][ft_len(*str, '\n')]));
+	ft_strdel(str);
+	*str = tmp;
 }
 
-int				get_next_line(const int fd, char **line)
+int		get_next_line(const int fd, char **line)
 {
-	static char		buff[BUFF_SIZE + 1];
-	int				ret;
-	int				endl;
+	static char	*str[OPEN_MAX];
+	char		*tmp;
+	char		buf[BUFF_SIZE + 1];
+	int			ret;
 
-	if (fd < 0 || !line || !(*line = ft_strnew(BUFF_SIZE)) || !BUFF_SIZE)
+	if (fd < 0 || read(fd, "", 0) < 0 || line == NULL || fd > OPEN_MAX)
 		return (-1);
-	endl = -1;
-	while (endl == -1)
+	if (!str[fd])
+		str[fd] = ft_strnew(1);
+	while (!(ft_strchr(str[fd], '\n')))
 	{
-		if (!buff[0])
-			ft_bzero(buff, BUFF_SIZE + 1);
-		if (!buff[0] && (ret = read(fd, buff, BUFF_SIZE)) < 0)
-			return (-1);
-		if (!ret && **line)
-			return (1);
-		if (!ret && !buff[0])
-			return (0);
-		if ((endl = ft_search_char(buff, '\n')) < -1 ||
-				!(*line = gnl_join(line, buff)))
-			return (-1);
+		ret = read(fd, buf, BUFF_SIZE);
+		if (ret == 0)
+			break ;
+		buf[ret] = '\0';
+		tmp = ft_strjoin(str[fd], buf);
+		ft_strdel(&str[fd]);
+		str[fd] = tmp;
 	}
+	if (ft_strlen(str[fd]) == 0)
+		return (0);
+	gnl_join(line, &str[fd]);
 	return (1);
 }
