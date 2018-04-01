@@ -24,7 +24,7 @@ int		ft_len(char *str, char c)
 	return (i);
 }
 
-void	gnl_join(char **line, char **str)
+void	gnl(char **line, char **str)
 {
 	char *tmp;
 
@@ -59,6 +59,6 @@ int		get_next_line(const int fd, char **line)
 	}
 	if (ft_strlen(str[fd]) == 0)
 		return (0);
-	gnl_join(line, &str[fd]);
+	gnl(line, &str[fd]);
 	return (1);
 }
